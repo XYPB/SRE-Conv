@@ -3,7 +3,7 @@
 
 *Yale University*
 
-![teaser](./assets/teaser.gif)
+![teaser](./assets/teaser_480p.gif)
 
 This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by ISBI 2025)
 
