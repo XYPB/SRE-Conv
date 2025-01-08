@@ -11,16 +11,16 @@ This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equiv
 ![teaser](assets/tesser_480p.gif)
 
 
-### Abstract
+## Abstract
 
 > Convolutional neural networks (CNNs) are essential tools for computer vision tasks, but they lack traditionally desired properties of extracted features that could further improve model performance, e.g., rotational equivariance. Such properties are ubiquitous in biomedical images, which often lack explicit orientation. While current work largely relies on data augmentation or explicit modules to capture orientation information, this comes at the expense of increased training costs or ineffective approximations of the desired equivariance. To overcome these challenges, we propose a novel and efficient implementation of the Symmetric Rotation-Equivariant (SRE) Convolution (SRE-Conv) kernel, designed to learn rotation-invariant features while simultaneously compressing the model size. The SRE-Conv kernel can easily be incorporated into any CNN backbone. We validate the ability of a deep SRE-CNN to capture equivariance to rotation using the public MedMNISTv2 dataset (16 total tasks). SRE-Conv- CNN demonstrated improved rotated image classification performance accuracy on all 16 test datasets in both 2D and 3D images, all while increasing efficiency with fewer parameters and reduced memory footprint.
 
 
-### News
+## News
 
 - **Jan. 2025** Paper accepted by ISBI 2025 and GitHub code released🎉!
 
-### Installation
+## Installation
 
 We provide both the PyPI package for SRE-Conv and the code to reproduce the experiment results in this repo
 
@@ -38,7 +38,7 @@ The minimal requirement for the SRE-Conv is:
 
 **Note**: Using lower version of torch and numpy should be fine given that we didn't use any new feature in the new torch version, but we do suggest you to follow the required dependencies. If you have to use the different version of torch/numpy, you may also try to install the package from source code at [project repo](https://github.com/XYPB/SRE-Conv).
 
-### Usage
+## Usage
 ```python
 >>> import torch
 >>> from SRE_Conv import SRE_Conv2d, sre_resnet18
@@ -51,7 +51,7 @@ The minimal requirement for the SRE-Conv is:
 >>> SRE_r18 = sre_resnet18(sre_conv_size=[9, 9, 5, 5], skip_first_maxpool=True)
 ```
 
-### Train & Evaluation on MedMNIST
+## Train & Evaluation on MedMNIST
 
 To reproduce the experiment results, you may also need to install the following packages:
 ```bash
@@ -71,6 +71,6 @@ python main.py --med-mnist <medmnist3d_dataset> --epochs 100 --model-type sre_r3
 ```
 
 
-### Reference
+## Reference
 
 *We will update this soon...*
