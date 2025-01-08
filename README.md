@@ -60,7 +60,10 @@ To reproduce the experiment results, you may also need to install the following 
 Run the following comment to train the model and evaluate the performance under both flip and rotation evaluation.
 ```bash
 cd ./src
-python main.py --med-mnist <medmnist_dataset> --epochs 100 --model-type sre_resnet18 --sre-conv-size-list 9 9 5 5 -b 128 --lr 2e-2 --cos --sgd --eval-rot --eval-flip --train-flip-p 0 --log --cudnn --moco-aug --translate-ratio 0.1 --translation --save-model --save-best
+# 2D MedMNIST
+python main.py --med-mnist <medmnist_dataset> --epochs 100 --model-type sre_resnet18 --sre-conv-size-list 9 9 5 5 -b 128 --lr 2e-2 --cos --sgd --eval-rot --eval-flip --train-flip-p 0 --log --cudnn --moco-aug --translate-ratio 0.1 --translation --save-model  --save-best --res-keep-conv1
+# 3D MedMNIST
+python main.py --med-mnist <medmnist3d_dataset> --epochs 100 --model-type sre_r3d_18 --ri-conv-size-list 5 5 5 5 -b 4 --lr 1e-2 --cos --sgd --eval-rot --res-keep-conv1 --log --cudnn --moco-aug
 ```
 
 
