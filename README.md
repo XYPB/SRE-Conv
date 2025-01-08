@@ -1,11 +1,15 @@
-# "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification"
+# SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification
+
+[![PyPI version](https://img.shields.io/pypi/v/SRE-Conv.svg)](https://pypi.org/project/SRE-Conv/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by **ISBI 2025**)
+
 *Yuexi Du, Jiazhen Zhang, Tal Zeevi, Nicha C. Dvornek, John A. Onofrey*
 
 *Yale University*
 
 ![teaser](assets/tesser_480p.gif)
 
-This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by **ISBI 2025**)
 
 ### Abstract
 
