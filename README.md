@@ -43,12 +43,10 @@ The minimal requirement for the SRE-Conv is:
 >>> import torch
 >>> from SRE_Conv import SRE_Conv2d, sre_resnet18
 >>> x = torch.randn(2, 3, 32, 32)
->>> SRE_conv = SRE_Conv2d(3, 16, 3)
+>>> sre_conv = SRE_Conv2d(3, 16, 3)
 >>> conv_out = SRE_conv(x)
->>> SRE_r18 = sre_resnet18()
->>> output = SRE_r18(x)
-# To reproduce the SRE-ResNet18 used in the paper, use:
->>> SRE_r18 = sre_resnet18(sre_conv_size=[9, 9, 5, 5], skip_first_maxpool=True)
+>>> sre_r18 = sre_resnet18()
+>>> output = sre_r18(x)
 ```
 
 ## Train & Evaluation on MedMNIST
