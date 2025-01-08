@@ -18,7 +18,7 @@ This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equiv
 
 ## News
 
-- **Jan. 2025** Paper accepted by ISBI 2025 and GitHub code released🎉!
+- **Jan. 2025** - Paper accepted by ISBI 2025 and GitHub code released🎉!
 
 ## Installation
 
