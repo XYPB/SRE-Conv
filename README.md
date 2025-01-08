@@ -5,7 +5,7 @@
 
 ![teaser](assets/tesser_480p.gif)
 
-This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by ISBI 2025)
+This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by **ISBI 2025**)
 
 ### Abstract
 
@@ -14,7 +14,7 @@ This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equiv
 
 ### News
 
-- **Jan. 2025** Paper accepted by ISBI 2025 and GitHub code released
+- **Jan. 2025** Paper accepted by ISBI 2025 and GitHub code released🎉!
 
 ### Installation
 

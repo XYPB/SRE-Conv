@@ -26,7 +26,12 @@ __all__ = [
 
 class Conv3DSimple(nn.Conv3d):
     def __init__(
-        self, in_planes: int, out_planes: int, midplanes: Optional[int] = None, stride: int = 1, padding: int = 1
+        self,
+        in_planes: int,
+        out_planes: int,
+        midplanes: Optional[int] = None,
+        stride: int = 1,
+        padding: int = 1,
     ) -> None:
 
         super().__init__(
@@ -45,8 +50,14 @@ class Conv3DSimple(nn.Conv3d):
 
 class SREConv3D(SRE_Conv3d):
     def __init__(
-        self, in_planes: int, out_planes: int, midplanes: Optional[int] = None, stride: int = 1, padding: int = 1,
-        kernel_size: int = 3, sre_k: int = None,
+        self,
+        in_planes: int,
+        out_planes: int,
+        midplanes: Optional[int] = None,
+        stride: int = 1,
+        padding: int = 1,
+        kernel_size: int = 3,
+        sre_k: int = None,
     ) -> None:
 
         super().__init__(
@@ -54,7 +65,7 @@ class SREConv3D(SRE_Conv3d):
             out_channels=out_planes,
             kernel_size=(kernel_size, kernel_size, kernel_size),
             stride=stride,
-            padding=kernel_size//2,
+            padding=kernel_size // 2,
             sre_k=sre_k,
             bias=False,
         )
@@ -65,7 +76,14 @@ class SREConv3D(SRE_Conv3d):
 
 
 class Conv2Plus1D(nn.Sequential):
-    def __init__(self, in_planes: int, out_planes: int, midplanes: int, stride: int = 1, padding: int = 1) -> None:
+    def __init__(
+        self,
+        in_planes: int,
+        out_planes: int,
+        midplanes: int,
+        stride: int = 1,
+        padding: int = 1,
+    ) -> None:
         super().__init__(
             nn.Conv3d(
                 in_planes,
@@ -78,7 +96,12 @@ class Conv2Plus1D(nn.Sequential):
             nn.BatchNorm3d(midplanes),
             nn.ReLU(inplace=True),
             nn.Conv3d(
-                midplanes, out_planes, kernel_size=(3, 1, 1), stride=(stride, 1, 1), padding=(padding, 0, 0), bias=False
+                midplanes,
+                out_planes,
+                kernel_size=(3, 1, 1),
+                stride=(stride, 1, 1),
+                padding=(padding, 0, 0),
+                bias=False,
             ),
         )
 
@@ -89,7 +112,12 @@ class Conv2Plus1D(nn.Sequential):
 
 class Conv3DNoTemporal(nn.Conv3d):
     def __init__(
-        self, in_planes: int, out_planes: int, midplanes: Optional[int] = None, stride: int = 1, padding: int = 1
+        self,
+        in_planes: int,
+        out_planes: int,
+        midplanes: Optional[int] = None,
+        stride: int = 1,
+        padding: int = 1,
     ) -> None:
 
         super().__init__(
@@ -124,18 +152,23 @@ class SREBasicBlock(nn.Module):
 
         super().__init__()
         if stride > 1:
-            down_pooling = nn.AvgPool3d(kernel_size=(stride, stride, stride), stride=(stride, stride, stride))
+            down_pooling = nn.AvgPool3d(
+                kernel_size=(stride, stride, stride), stride=(stride, stride, stride)
+            )
         else:
             down_pooling = nn.Identity()
         self.conv1 = nn.Sequential(
             down_pooling,
-            conv_builder(inplanes, planes, midplanes, 1, kernel_size=sre_size, sre_k=sre_k), 
-            nn.BatchNorm3d(planes), 
-            nn.ReLU(inplace=True)
+            conv_builder(
+                inplanes, planes, midplanes, 1, kernel_size=sre_size, sre_k=sre_k
+            ),
+            nn.BatchNorm3d(planes),
+            nn.ReLU(inplace=True),
         )
         self.conv2 = nn.Sequential(
-            conv_builder(planes, planes, midplanes, kernel_size=sre_size, sre_k=sre_k), 
-            nn.BatchNorm3d(planes))
+            conv_builder(planes, planes, midplanes, kernel_size=sre_size, sre_k=sre_k),
+            nn.BatchNorm3d(planes),
+        )
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
@@ -171,9 +204,13 @@ class BasicBlock(nn.Module):
 
         super().__init__()
         self.conv1 = nn.Sequential(
-            conv_builder(inplanes, planes, midplanes, stride), nn.BatchNorm3d(planes), nn.ReLU(inplace=True)
+            conv_builder(inplanes, planes, midplanes, stride),
+            nn.BatchNorm3d(planes),
+            nn.ReLU(inplace=True),
         )
-        self.conv2 = nn.Sequential(conv_builder(planes, planes, midplanes), nn.BatchNorm3d(planes))
+        self.conv2 = nn.Sequential(
+            conv_builder(planes, planes, midplanes), nn.BatchNorm3d(planes)
+        )
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
@@ -210,11 +247,15 @@ class Bottleneck(nn.Module):
 
         # 1x1x1
         self.conv1 = nn.Sequential(
-            nn.Conv3d(inplanes, planes, kernel_size=1, bias=False), nn.BatchNorm3d(planes), nn.ReLU(inplace=True)
+            nn.Conv3d(inplanes, planes, kernel_size=1, bias=False),
+            nn.BatchNorm3d(planes),
+            nn.ReLU(inplace=True),
         )
         # Second kernel
         self.conv2 = nn.Sequential(
-            conv_builder(planes, planes, midplanes, stride), nn.BatchNorm3d(planes), nn.ReLU(inplace=True)
+            conv_builder(planes, planes, midplanes, stride),
+            nn.BatchNorm3d(planes),
+            nn.ReLU(inplace=True),
         )
 
         # 1x1x1
@@ -247,18 +288,32 @@ class BasicStem(nn.Sequential):
 
     def __init__(self, in_channels=3) -> None:
         super().__init__(
-            nn.Conv3d(in_channels, 64, kernel_size=(3, 7, 7), stride=(1, 1, 1), padding=(1, 3, 3), bias=False),
+            nn.Conv3d(
+                in_channels,
+                64,
+                kernel_size=(3, 7, 7),
+                stride=(1, 1, 1),
+                padding=(1, 3, 3),
+                bias=False,
+            ),
             nn.BatchNorm3d(64),
             nn.ReLU(inplace=True),
         )
-        
+
 
 class SREBasicStem(nn.Sequential):
     """The default conv-batchnorm-relu stem"""
 
     def __init__(self, in_channels=3) -> None:
         super().__init__(
-            SRE_Conv3d(in_channels, 64, kernel_size=(3, 7, 7), stride=(1, 1, 1), padding=(1, 3, 3), bias=False),
+            SRE_Conv3d(
+                in_channels,
+                64,
+                kernel_size=(3, 7, 7),
+                stride=(1, 1, 1),
+                padding=(1, 3, 3),
+                bias=False,
+            ),
             nn.BatchNorm3d(64),
             nn.ReLU(inplace=True),
         )
@@ -269,10 +324,24 @@ class R2Plus1dStem(nn.Sequential):
 
     def __init__(self, in_channels=3) -> None:
         super().__init__(
-            nn.Conv3d(in_channels, 45, kernel_size=(1, 7, 7), stride=(1, 2, 2), padding=(0, 3, 3), bias=False),
+            nn.Conv3d(
+                in_channels,
+                45,
+                kernel_size=(1, 7, 7),
+                stride=(1, 2, 2),
+                padding=(0, 3, 3),
+                bias=False,
+            ),
             nn.BatchNorm3d(45),
             nn.ReLU(inplace=True),
-            nn.Conv3d(45, 64, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False),
+            nn.Conv3d(
+                45,
+                64,
+                kernel_size=(3, 1, 1),
+                stride=(1, 1, 1),
+                padding=(1, 0, 0),
+                bias=False,
+            ),
             nn.BatchNorm3d(64),
             nn.ReLU(inplace=True),
         )
@@ -282,7 +351,9 @@ class VideoResNet(nn.Module):
     def __init__(
         self,
         block: Type[Union[BasicBlock, SREBasicBlock, Bottleneck]],
-        conv_makers: Sequence[Type[Union[Conv3DSimple, SREConv3D, Conv3DNoTemporal, Conv2Plus1D]]],
+        conv_makers: Sequence[
+            Type[Union[Conv3DSimple, SREConv3D, Conv3DNoTemporal, Conv2Plus1D]]
+        ],
         layers: List[int],
         stem: Callable[..., nn.Module],
         num_classes: int = 400,
@@ -309,14 +380,42 @@ class VideoResNet(nn.Module):
 
         self.stem = stem(in_channels=in_channels)
 
-        self.layer1 = self._make_layer(block, conv_makers[0], 64, layers[0], stride=1, 
-                                       sre_conv_size=self.sre_conv_size[0], sre_k=self.sre_k[0])
-        self.layer2 = self._make_layer(block, conv_makers[1], 128, layers[1], stride=2,
-                                       sre_conv_size=self.sre_conv_size[1], sre_k=self.sre_k[1])
-        self.layer3 = self._make_layer(block, conv_makers[2], 256, layers[2], stride=2,
-                                       sre_conv_size=self.sre_conv_size[2], sre_k=self.sre_k[2])
-        self.layer4 = self._make_layer(block, conv_makers[3], 512, layers[3], stride=2,
-                                       sre_conv_size=self.sre_conv_size[3], sre_k=self.sre_k[3])
+        self.layer1 = self._make_layer(
+            block,
+            conv_makers[0],
+            64,
+            layers[0],
+            stride=1,
+            sre_conv_size=self.sre_conv_size[0],
+            sre_k=self.sre_k[0],
+        )
+        self.layer2 = self._make_layer(
+            block,
+            conv_makers[1],
+            128,
+            layers[1],
+            stride=2,
+            sre_conv_size=self.sre_conv_size[1],
+            sre_k=self.sre_k[1],
+        )
+        self.layer3 = self._make_layer(
+            block,
+            conv_makers[2],
+            256,
+            layers[2],
+            stride=2,
+            sre_conv_size=self.sre_conv_size[2],
+            sre_k=self.sre_k[2],
+        )
+        self.layer4 = self._make_layer(
+            block,
+            conv_makers[3],
+            512,
+            layers[3],
+            stride=2,
+            sre_conv_size=self.sre_conv_size[3],
+            sre_k=self.sre_k[3],
+        )
 
         self.avgpool = nn.AdaptiveAvgPool3d((1, 1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
@@ -357,7 +456,9 @@ class VideoResNet(nn.Module):
     def _make_layer(
         self,
         block: Type[Union[BasicBlock, SREBasicBlock, Bottleneck]],
-        conv_builder: Type[Union[Conv3DSimple, SREConv3D, Conv3DNoTemporal, Conv2Plus1D]],
+        conv_builder: Type[
+            Union[Conv3DSimple, SREConv3D, Conv3DNoTemporal, Conv2Plus1D]
+        ],
         planes: int,
         blocks: int,
         stride: int = 1,
@@ -371,22 +472,43 @@ class VideoResNet(nn.Module):
             if conv_builder == SREConv3D:
                 downsample = nn.Sequential(
                     nn.AvgPool3d(kernel_size=ds_stride, stride=ds_stride),
-                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=1, stride=1, bias=False),
+                    nn.Conv3d(
+                        self.inplanes,
+                        planes * block.expansion,
+                        kernel_size=1,
+                        stride=1,
+                        bias=False,
+                    ),
                     nn.BatchNorm3d(planes * block.expansion),
                 )
             else:
                 downsample = nn.Sequential(
-                    nn.Conv3d(self.inplanes, planes * block.expansion, kernel_size=1, stride=ds_stride, bias=False),
+                    nn.Conv3d(
+                        self.inplanes,
+                        planes * block.expansion,
+                        kernel_size=1,
+                        stride=ds_stride,
+                        bias=False,
+                    ),
                     nn.BatchNorm3d(planes * block.expansion),
                 )
         layers = []
-        layers.append(block(self.inplanes, planes, conv_builder, stride, downsample, 
-                            sre_size=sre_conv_size))
+        layers.append(
+            block(
+                self.inplanes,
+                planes,
+                conv_builder,
+                stride,
+                downsample,
+                sre_size=sre_conv_size,
+            )
+        )
 
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
-            layers.append(block(self.inplanes, planes, conv_builder, 
-                                sre_size=sre_conv_size))
+            layers.append(
+                block(self.inplanes, planes, conv_builder, sre_size=sre_conv_size)
+            )
 
         return nn.Sequential(*layers)
 
@@ -425,7 +547,9 @@ _COMMON_META = {
 class R3D_18_Weights(WeightsEnum):
     KINETICS400_V1 = Weights(
         url="https://download.pytorch.org/models/r3d_18-b3b3357e.pth",
-        transforms=partial(VideoClassification, crop_size=(112, 112), resize_size=(128, 171)),
+        transforms=partial(
+            VideoClassification, crop_size=(112, 112), resize_size=(128, 171)
+        ),
         meta={
             **_COMMON_META,
             "num_params": 33371472,
@@ -443,7 +567,9 @@ class R3D_18_Weights(WeightsEnum):
 class MC3_18_Weights(WeightsEnum):
     KINETICS400_V1 = Weights(
         url="https://download.pytorch.org/models/mc3_18-a90a0ba3.pth",
-        transforms=partial(VideoClassification, crop_size=(112, 112), resize_size=(128, 171)),
+        transforms=partial(
+            VideoClassification, crop_size=(112, 112), resize_size=(128, 171)
+        ),
         meta={
             **_COMMON_META,
             "num_params": 11695440,
@@ -461,7 +587,9 @@ class MC3_18_Weights(WeightsEnum):
 class R2Plus1D_18_Weights(WeightsEnum):
     KINETICS400_V1 = Weights(
         url="https://download.pytorch.org/models/r2plus1d_18-91a641e6.pth",
-        transforms=partial(VideoClassification, crop_size=(112, 112), resize_size=(128, 171)),
+        transforms=partial(
+            VideoClassification, crop_size=(112, 112), resize_size=(128, 171)
+        ),
         meta={
             **_COMMON_META,
             "num_params": 31505325,
@@ -477,7 +605,9 @@ class R2Plus1D_18_Weights(WeightsEnum):
 
 
 @handle_legacy_interface(weights=("pretrained", R3D_18_Weights.KINETICS400_V1))
-def r3d_18(*, weights: Optional[R3D_18_Weights] = None, progress: bool = True, **kwargs: Any) -> VideoResNet:
+def r3d_18(
+    *, weights: Optional[R3D_18_Weights] = None, progress: bool = True, **kwargs: Any
+) -> VideoResNet:
     """Construct 18 layer Resnet3D model.
 
     .. betastatus:: video module
@@ -532,7 +662,9 @@ def sre_r3d_18(*, progress: bool = True, **kwargs: Any) -> VideoResNet:
 
 
 @handle_legacy_interface(weights=("pretrained", MC3_18_Weights.KINETICS400_V1))
-def mc3_18(*, weights: Optional[MC3_18_Weights] = None, progress: bool = True, **kwargs: Any) -> VideoResNet:
+def mc3_18(
+    *, weights: Optional[MC3_18_Weights] = None, progress: bool = True, **kwargs: Any
+) -> VideoResNet:
     """Construct 18 layer Mixed Convolution network as in
 
     .. betastatus:: video module
@@ -568,7 +700,12 @@ def mc3_18(*, weights: Optional[MC3_18_Weights] = None, progress: bool = True, *
 
 
 @handle_legacy_interface(weights=("pretrained", R2Plus1D_18_Weights.KINETICS400_V1))
-def r2plus1d_18(*, weights: Optional[R2Plus1D_18_Weights] = None, progress: bool = True, **kwargs: Any) -> VideoResNet:
+def r2plus1d_18(
+    *,
+    weights: Optional[R2Plus1D_18_Weights] = None,
+    progress: bool = True,
+    **kwargs: Any,
+) -> VideoResNet:
     """Construct 18 layer deep R(2+1)D network as in
 
     .. betastatus:: video module

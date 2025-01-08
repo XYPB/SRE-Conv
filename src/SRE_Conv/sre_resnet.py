@@ -81,7 +81,9 @@ class SREBasicBlock(nn.Module):
             raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
         self.stride = stride
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
-        conv1 = SRE_convkxk(sre_conv_size, inplanes, planes, groups=sre_groups, sre_k=sre_k)
+        conv1 = SRE_convkxk(
+            sre_conv_size, inplanes, planes, groups=sre_groups, sre_k=sre_k
+        )
         if self.stride != 1:
             self.conv1 = nn.Sequential(
                 nn.AvgPool2d(kernel_size=self.stride, stride=self.stride),

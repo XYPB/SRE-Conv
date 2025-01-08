@@ -302,7 +302,7 @@ class SRE_Conv1d(_SRE_ConvNd):
             if i == num_levels - 1:
                 if self.force_circular:
                     continue
-                idx = (D==levels[i]).astype(int)
+                idx = (D == levels[i]).astype(int)
             else:
                 idx = ((D >= levels[i]) & (D < levels[i + 1])).astype(int)
             level_mat = torch.tensor(idx, **factory_kwargs)[None, None, :, :]
@@ -392,7 +392,7 @@ class SRE_Conv2d(_SRE_ConvNd):
             if i == num_levels - 1:
                 if self.force_circular:
                     continue
-                idx = (D==levels[i]).astype(int)
+                idx = (D == levels[i]).astype(int)
             else:
                 idx = ((D >= levels[i]) & (D < levels[i + 1])).astype(int)
             level_mat = torch.tensor(idx, **factory_kwargs)[None, None, :, :]
@@ -482,7 +482,7 @@ class SRE_Conv3d(_SRE_ConvNd):
             if i == num_levels - 1:
                 if self.force_circular:
                     continue
-                idx = (D==levels[i]).astype(int)
+                idx = (D == levels[i]).astype(int)
             else:
                 idx = ((D >= levels[i]) & (D < levels[i + 1])).astype(int)
             level_mat = torch.tensor(idx, **factory_kwargs)[None, None, :, :, :]
