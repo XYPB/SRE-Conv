@@ -3,7 +3,10 @@
 
 *Yale University*
 
-![teaser](./assets/teaser_480p.gif)
+<video autoplay muted loop>
+  <source src="assets/teaser.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by ISBI 2025)
 
