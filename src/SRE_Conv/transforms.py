@@ -39,13 +39,20 @@ class PadRotateWrapper(object):
 
 
 class FixRotate(object):
-    def __init__(self, degree, expand=False):
+    def __init__(self, degree, expand=False, interpolation="nearest"):
         super().__init__()
         self.degree = degree
         self.expand = expand
+        if interpolation == "nearest":
+            self.interpolation = F.InterpolationMode.NEAREST
+        elif interpolation == "bilinear":
+            self.interpolation = F.InterpolationMode.BILINEAR
+        elif interpolation == "bicubic":
+            self.interpolation = F.InterpolationMode.BICUBIC
 
     def __call__(self, x):
-        return F.rotate(x, self.degree, expand=self.expand)
+        return F.rotate(x, self.degree, expand=self.expand,
+                        interpolation=self.interpolation)
 
 
 class PadTransWrapper(object):
