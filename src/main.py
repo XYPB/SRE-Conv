@@ -425,10 +425,14 @@ def main_worker(args):
 
     if args.load_model:
         assert os.path.exists(args.load_model)
-        print(f"### load model logged under {args.load_model}...")
-        model_ckpt_dir = os.path.join(args.load_model, "ckpt")
-        ckpts = sorted(glob(os.path.join(model_ckpt_dir, "*.ckpt")))
-        ckpt_path = ckpts[-1]
+        if os.path.isdir(args.load_model):
+            print(f"### load model logged under {args.load_model}...")
+            model_ckpt_dir = os.path.join(args.load_model, "ckpt")
+            ckpts = sorted(glob(os.path.join(model_ckpt_dir, "*.ckpt")))
+            ckpt_path = ckpts[-1]
+        elif os.path.isfile(args.load_model) and ".ckpt" in args.load_model:
+            print(f"### load model at {args.load_model}...")
+            ckpt_path = args.load_model
         ckpt = torch.load(ckpt_path)
         state_dict = ckpt["state_dict"]
         cur_ep = ckpt["cur_ep"]
