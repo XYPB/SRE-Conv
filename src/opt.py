@@ -57,6 +57,9 @@ parser.add_argument(
     "--dry-run", action="store_true", default=False, help="quickly check a single pass"
 )
 parser.add_argument(
+    "--eval-only", action="store_true", default=False, help="quickly evaluate the model"
+)
+parser.add_argument(
     "--adam", action="store_true", default=False, help="using adam optim"
 )
 parser.add_argument(

@@ -466,78 +466,79 @@ def main_worker(args):
     best_acc = -1
     for epoch in range(cur_ep, args.epochs + 1):
 
-        step_losses, train_acc, grad_norm = train(
-            args,
-            model,
-            device,
-            train_loader,
-            optimizer,
-            scaler,
-            epoch,
-            log_dir,
-        )
-        test_loss, test_acc = test(
-            args, model, device, test_loader, epoch=epoch, confusion_mat=False
-        )
-        steps = len(step_losses)
-        total_train_loss += step_losses
-        total_train_acc += [train_acc for _ in range(steps)]
-        if args.log_grad_norm:
-            total_grad_norm += grad_norm
-        total_test_loss += [test_loss for _ in range(steps)]
-        total_test_acc += [test_acc for _ in range(steps)]
-        scheduler.step()
-        if epoch == 1 and args.dev:
-            print(torch.cuda.memory_summary(device=device, abbreviated=False))
-
-        if args.log:
-            total_grad_norm = total_grad_norm if args.log_grad_norm else None
-            log_train_val(
-                total_train_loss,
-                total_test_loss,
-                total_train_acc,
-                total_test_acc,
-                total_grad_norm,
+        if not args.eval_only:
+            step_losses, train_acc, grad_norm = train(
+                args,
+                model,
+                device,
+                train_loader,
+                optimizer,
+                scaler,
+                epoch,
                 log_dir,
             )
+            test_loss, test_acc = test(
+                args, model, device, test_loader, epoch=epoch, confusion_mat=False
+            )
+            steps = len(step_losses)
+            total_train_loss += step_losses
+            total_train_acc += [train_acc for _ in range(steps)]
+            if args.log_grad_norm:
+                total_grad_norm += grad_norm
+            total_test_loss += [test_loss for _ in range(steps)]
+            total_test_acc += [test_acc for _ in range(steps)]
+            scheduler.step()
+            if epoch == 1 and args.dev:
+                print(torch.cuda.memory_summary(device=device, abbreviated=False))
 
-        if args.save_model:
-            ckpt_dir = os.path.join(log_dir, "ckpt")
-            os.makedirs(ckpt_dir, exist_ok=True)
-            if args.save_rec and ((epoch + 1) % args.save_interval) == 0:
-                ckpt = {
-                    "state_dict": model.state_dict(),
-                    "cur_ep": epoch + 1,
-                }
-                torch.save(
-                    ckpt,
-                    os.path.join(ckpt_dir, f"{args.model_type}_ep{epoch:0>4d}.ckpt"),
+            if args.log:
+                total_grad_norm = total_grad_norm if args.log_grad_norm else None
+                log_train_val(
+                    total_train_loss,
+                    total_test_loss,
+                    total_train_acc,
+                    total_test_acc,
+                    total_grad_norm,
+                    log_dir,
                 )
-            elif args.save_best:
-                ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
-                ckpt = {
-                    "state_dict": model.state_dict(),
-                    "cur_ep": epoch + 1,
-                }
-                torch.save(ckpt, ckpt_dest)
-                if test_acc > best_acc:
-                    best_dist = os.path.join(ckpt_dir, f"{args.model_type}_best.ckpt")
-                    print(f"### Update best weight with test auc: {test_acc:.4f}")
-                    shutil.copy(ckpt_dest, best_dist)
-                    best_acc = test_acc
-            else:
-                ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
-                ckpt = {
-                    "state_dict": model.state_dict(),
-                    "cur_ep": epoch + 1,
-                }
-                torch.save(ckpt, ckpt_dest)
 
-        gc.collect()
+            if args.save_model:
+                ckpt_dir = os.path.join(log_dir, "ckpt")
+                os.makedirs(ckpt_dir, exist_ok=True)
+                if args.save_rec and ((epoch + 1) % args.save_interval) == 0:
+                    ckpt = {
+                        "state_dict": model.state_dict(),
+                        "cur_ep": epoch + 1,
+                    }
+                    torch.save(
+                        ckpt,
+                        os.path.join(ckpt_dir, f"{args.model_type}_ep{epoch:0>4d}.ckpt"),
+                    )
+                elif args.save_best:
+                    ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
+                    ckpt = {
+                        "state_dict": model.state_dict(),
+                        "cur_ep": epoch + 1,
+                    }
+                    torch.save(ckpt, ckpt_dest)
+                    if test_acc > best_acc:
+                        best_dist = os.path.join(ckpt_dir, f"{args.model_type}_best.ckpt")
+                        print(f"### Update best weight with test auc: {test_acc:.4f}")
+                        shutil.copy(ckpt_dest, best_dist)
+                        best_acc = test_acc
+                else:
+                    ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
+                    ckpt = {
+                        "state_dict": model.state_dict(),
+                        "cur_ep": epoch + 1,
+                    }
+                    torch.save(ckpt, ckpt_dest)
 
-        verbose = epoch == args.epochs
+            gc.collect()
+
+        verbose = (epoch == args.epochs) or args.eval_only
         eval_3d = args.med_mnist != None and "3d" in args.med_mnist
-        if args.eval_rot and (epoch % args.eval_interval == 0 or epoch == args.epochs):
+        if args.eval_rot and (epoch % args.eval_interval == 0 or epoch == args.epochs or args.eval_only):
             # don't change the original args
             rot_acc = eval_rot(
                 model,
@@ -549,7 +550,7 @@ def main_worker(args):
             )
             total_eval_rot_acc.append(rot_acc)
 
-        if args.eval_flip and (epoch % args.eval_interval == 0 or epoch == args.epochs):
+        if args.eval_flip and (epoch % args.eval_interval == 0 or epoch == args.epochs or args.eval_only):
             # don't change the original args
             flip_acc = eval_flip(
                 model,
@@ -561,18 +562,21 @@ def main_worker(args):
             )
             total_eval_flip_acc.append(flip_acc)
 
-    if args.log:
-        with open(os.path.join(log_dir, "logs.json"), "w") as f:
-            serialize = lambda l: [float(x) for x in l]
-            logs = {
-                "train_loss": serialize(total_train_loss),
-                "test_loss": serialize(total_test_loss),
-                "train_acc": serialize(total_train_acc),
-                "test_acc": serialize(total_test_acc),
-                "eval_rot_acc": serialize(total_eval_rot_acc),
-                "eval_flip_acc": serialize(total_eval_flip_acc),
-            }
-            json.dump(logs, f)
+        if args.log and not args.eval_only:
+            with open(os.path.join(log_dir, "logs.json"), "w") as f:
+                serialize = lambda l: [float(x) for x in l]
+                logs = {
+                    "train_loss": serialize(total_train_loss),
+                    "test_loss": serialize(total_test_loss),
+                    "train_acc": serialize(total_train_acc),
+                    "test_acc": serialize(total_test_acc),
+                    "eval_rot_acc": serialize(total_eval_rot_acc),
+                    "eval_flip_acc": serialize(total_eval_flip_acc),
+                }
+                json.dump(logs, f)
+        
+        if args.eval_only:
+            break
 
 
 if __name__ == "__main__":
