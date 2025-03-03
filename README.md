@@ -53,9 +53,9 @@ x = torch.randn(2, 3, 32, 32)
 sre_conv = SRE_Conv2d(3, 16, 3)
 y = SRE_conv(x)
 x_rot = torch.rot90(x, 1, (2, 3))
-y_rot = SRE_conv(x)
+y_rot = SRE_conv(x_rot)
 # check equivariance under 90-degree rotation
-print(torch.allclose(torch.rot90(y, 1, (2, 3)), y_rot))
+print(torch.allclose(torch.rot90(y, 1, (2, 3)), y_rot, atol=1e-7))
 ```
 
 For more detail about the specific argument for our SRE-Conv, please refer to [here](https://github.com/XYPB/SRE-Conv/blob/458e24c61f97229cfa167c60ad03f7f2c43bb91e/src/SRE_Conv/sre_conv.py#L40-L71).
