@@ -368,6 +368,7 @@ def main_worker(args):
             model.conv1 = nn.Conv2d(
                 in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False
             )
+        model.maxpool = nn.Identity()
 
     if args.maxpool:
         model.avgpool = nn.AdaptiveMaxPool2d((1, 1))
