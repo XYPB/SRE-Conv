@@ -43,7 +43,7 @@ from utils import (
 
 
 # @profile
-def train(args, model, device, train_loader, optimizer, scaler, epoch, log_dir):
+def train(args, model, device, train_loader, optimizer, scaler, epoch, log_dir, logger=None):
     if log_dir:
         train_log_dir = os.path.join(log_dir, "vis_train")
         os.makedirs(train_log_dir, exist_ok=True)
@@ -106,6 +106,12 @@ def train(args, model, device, train_loader, optimizer, scaler, epoch, log_dir):
                 log_img(epoch, batch_idx, img, img_label, train_log_dir)
             if args.dry_run:
                 return step_losses, 0, step_grad_norm
+        if logger:
+            logger.log({
+                'train/loss': loss.item(),
+                'train/avg_loss': np.mean(step_losses),
+                'train/lr': optimizer.param_groups[0]['lr'],
+            })
     et = time.time()
     outputs = np.concatenate(outputs, axis=0)
     targets = np.concatenate(targets, axis=0).squeeze()
@@ -127,11 +133,18 @@ def train(args, model, device, train_loader, optimizer, scaler, epoch, log_dir):
     print(
         f"Train set average Acc@1: {acc:.2f}%,\t Acc@5: {acc_top5:.2f}%,\tAUC: {auc:.2f}%,\tF1-score: {f1:.2f}%,\tTime: {et-st:.2f}"
     )
+    if logger:
+        logger.log({
+            'train/epoch_acc': acc,
+            'train/epoch_acc_top5': acc_top5,
+            'train/epoch_auc': auc,
+            'train/epoch_f1': f1,
+        })
     del targets, outputs
     return step_losses, acc, step_grad_norm
 
 
-def test(args, model, device, test_loader, epoch, verbose=True, confusion_mat=False):
+def test(args, model, device, test_loader, epoch, verbose=True, confusion_mat=False, logger=None):
     model.eval()
     test_loss = 0
     outputs = []
@@ -189,6 +202,14 @@ def test(args, model, device, test_loader, epoch, verbose=True, confusion_mat=Fa
         ba = 100 * balanced_accuracy_score(targets, preds)
         acc = 100 * accuracy_score(targets, preds)
     correct = np.sum(targets == preds)
+    if logger:
+        logger.log({
+            'test/epoch_acc': acc,
+            'test/epoch_acc_top5': acc_top5,
+            'test/epoch_auc': auc,
+            'test/epoch_f1': f1,
+            'test/epoch_ba': ba,
+        })
 
     if verbose:
         print(
@@ -266,6 +287,7 @@ def eval_flip(model, test_loader, device, args, verbose=False, eval_3d=False):
 def main_worker(args):
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
+    logger = None
     manual_seed(args.seed)
     if args.save_model or args.log:
         est = timezone("US/Eastern")
@@ -277,6 +299,12 @@ def main_worker(args):
             f"{task_name}_{dt_str}_{args.model_type}_{args.exp}_train_logs",
         )
         config_dir = os.path.join(log_dir, "config")
+        if args.wandb:
+            logger = wandb.init(
+                project=f"SREConv_{task_name}",
+                config=args.__dict__,
+                name=log_dir.split("/")[-1].replace("_train_logs", "")
+            )
     else:
         log_dir = None
 
@@ -481,9 +509,11 @@ def main_worker(args):
                 scaler,
                 epoch,
                 log_dir,
+                logger,
             )
             test_loss, test_acc = test(
-                args, model, device, test_loader, epoch=epoch, confusion_mat=False
+                args, model, device, test_loader, epoch=epoch, confusion_mat=False,
+                logger=logger,
             )
             steps = len(step_losses)
             total_train_loss += step_losses
@@ -554,6 +584,8 @@ def main_worker(args):
                 eval_3d=eval_3d,
             )
             total_eval_rot_acc.append(rot_acc)
+            if logger:
+                logger.log({'test/eval_rot_acc': rot_acc})
 
         if args.eval_flip and (epoch % args.eval_interval == 0 or epoch == args.epochs or args.eval_only):
             # don't change the original args
@@ -566,6 +598,8 @@ def main_worker(args):
                 eval_3d=eval_3d,
             )
             total_eval_flip_acc.append(flip_acc)
+            if logger:
+                logger.log({'test/eval_flip_acc': rot_acc})
 
         if args.log and not args.eval_only:
             with open(os.path.join(log_dir, "logs.json"), "w") as f:
@@ -582,8 +616,15 @@ def main_worker(args):
         
         if args.eval_only:
             break
+        
+    if logger:
+        logger.finish()
 
 
 if __name__ == "__main__":
     args = get_opt()
+    try:
+        import wandb
+    except ImportError:
+        args.wandb = False
     main_worker(args)

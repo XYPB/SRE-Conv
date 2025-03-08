@@ -94,6 +94,8 @@ To reproduce the experiment results, you may also need to install the following 
 "imageio"
 ```
 
+**New!** We enabled wandb logger for you training stats, install it with `pip install wandb` and use `--wandb` to log your training & testing results on the wandb.
+
 Run the following comment to train the model and evaluate the performance under both flip and rotation evaluation.
 ```bash
 cd ./src

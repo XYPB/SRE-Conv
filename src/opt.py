@@ -167,6 +167,9 @@ parser.add_argument(
 parser.add_argument(
     "--cur-ep", type=int, default=None, help="epoch of previous training"
 )
+parser.add_argument(
+    "--wandb", action="store_true", default=False, help="use wandb for logging"
+)
 
 
 # Augmentation
