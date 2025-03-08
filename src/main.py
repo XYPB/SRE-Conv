@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import builtins
 from glob import glob
 import shutil
 import time
@@ -14,7 +15,9 @@ from torch.backends import cudnn
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch.distributed as dist
 from torch.cuda.amp import GradScaler
+from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.optim.lr_scheduler import LambdaLR, StepLR, MultiStepLR, CosineAnnealingLR
 import torchvision.models.resnet as resnet
 import medmnist
@@ -41,6 +44,13 @@ from utils import (
     acc_at_topk,
 )
 
+def setup(rank, world_size, args):
+    # initialize the process group
+    dist.init_process_group("nccl", init_method=args.dist_url, rank=rank, world_size=world_size)
+
+
+def cleanup():
+    dist.destroy_process_group()
 
 # @profile
 def train(args, model, device, train_loader, optimizer, scaler, epoch, log_dir, logger=None):
@@ -284,8 +294,20 @@ def eval_flip(model, test_loader, device, args, verbose=False, eval_3d=False):
 
 
 # @profile
-def main_worker(args):
+def main_worker(rank, world_size, args):
     use_cuda = not args.no_cuda and torch.cuda.is_available()
+    
+    if args.ddp:
+        print(f"Use GPU:{rank} for training")
+        setup(rank, world_size, args)
+
+        # suppress printing if not master
+        if rank != 0 and not args.dev:
+
+            def print_pass(*args):
+                pass
+
+            builtins.print = print_pass
 
     logger = None
     manual_seed(args.seed)
@@ -309,7 +331,10 @@ def main_worker(args):
         log_dir = None
 
     if use_cuda:
-        device = torch.device("cuda")
+        if args.ddp:
+            device = torch.device(f'cuda:{rank}')
+        else:
+            device = torch.device("cuda")
     else:
         device = torch.device("cpu")
 
@@ -404,6 +429,15 @@ def main_worker(args):
     if args.dev:
         print(model)
 
+    if args.ddp:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(
+            train_dataset, 
+            num_replicas=world_size, 
+            rank=rank
+        )
+        train_kwargs.pop('shuffle')
+        train_kwargs['sampler'] = train_sampler
+
     train_loader = torch.utils.data.DataLoader(train_dataset, **train_kwargs)
     test_loader = torch.utils.data.DataLoader(test_dataset, **test_kwargs)
     model = model.to(device)
@@ -446,8 +480,18 @@ def main_worker(args):
         assert os.path.exists(ckpt_dir)
         args.load_model = log_dir
     elif args.log or args.save_model:
-        os.makedirs(log_dir, exist_ok=False)
-        print(f"### experiment logged under {log_dir}...")
+        try:
+            if args.ddp:
+                if rank == 0:
+                    os.makedirs(log_dir, exist_ok=False)
+                dist.barrier()
+            else:
+                os.makedirs(log_dir, exist_ok=False)
+        except FileExistsError:
+            cnt = glob(log_dir)
+            log_dir = log_dir.replace('_train_logs', f'_train_logs_{len(cnt)}')
+            os.makedirs(log_dir, exist_ok=False)
+        print(f"### experiment logged under {log_dir}")
         os.makedirs(config_dir, exist_ok=True)
         arg_dict = vars(args)
         json.dump(arg_dict, open(os.path.join(config_dir, "train_config.json"), "w"))
@@ -488,6 +532,9 @@ def main_worker(args):
         scheduler = MultiStepLR(optimizer, [50, 75], gamma=0.1, last_epoch=cur_ep - 2)
     else:
         scheduler = LambdaLR(optimizer, lambda x: x, last_epoch=cur_ep - 2)
+
+    if args.ddp:
+        model = DDP(model, device_ids=[rank])
 
     total_train_loss = []
     total_train_acc = []
@@ -569,6 +616,9 @@ def main_worker(args):
                     }
                     torch.save(ckpt, ckpt_dest)
 
+            if args.ddp:
+                dist.barrier()
+            
             gc.collect()
 
         verbose = (epoch == args.epochs) or args.eval_only
@@ -620,6 +670,9 @@ def main_worker(args):
     if logger:
         logger.finish()
 
+    if args.ddp:
+        cleanup()
+
 
 if __name__ == "__main__":
     args = get_opt()
@@ -627,4 +680,8 @@ if __name__ == "__main__":
         import wandb
     except ImportError:
         args.wandb = False
-    main_worker(args)
+    if args.ddp:
+        world_size = args.world_size
+        torch.multiprocessing.spawn(main_worker, args=(world_size, args,), nprocs=world_size, join=True)
+    else:
+        main_worker(0, 1, args)

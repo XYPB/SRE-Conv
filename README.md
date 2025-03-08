@@ -96,6 +96,8 @@ To reproduce the experiment results, you may also need to install the following 
 
 **New!** We enabled wandb logger for you training stats, install it with `pip install wandb` and use `--wandb` to log your training & testing results on the wandb.
 
+**New!** We enabled multi-GPU training for larger dataset using DDP. Please use `--ddp` and `--world-size <world_size>` to indicate the multi-GPU training settings.
+
 Run the following comment to train the model and evaluate the performance under both flip and rotation evaluation.
 ```bash
 cd ./src

@@ -114,6 +114,15 @@ parser.add_argument(
 parser.add_argument(
     "--bf16", action="store_true", default=False, help="use bfloat16 for training"
 )
+parser.add_argument(
+    '--ddp', action='store_true', default=False, help='use DDP training'
+)
+parser.add_argument(
+    '--world-size', type=int, default=1, help='world size for ddp training'
+)
+parser.add_argument(
+    '--dist-url', type=str, default='tcp://localhost:10001', help='communication url for ddp training'
+)
 
 # Log settings
 parser.add_argument(
