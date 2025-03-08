@@ -496,6 +496,7 @@ def main_worker(rank, world_size, args):
         arg_dict = vars(args)
         json.dump(arg_dict, open(os.path.join(config_dir, "train_config.json"), "w"))
 
+    ckpt = None
     if args.load_model:
         assert os.path.exists(args.load_model)
         if os.path.isdir(args.load_model):
@@ -532,6 +533,11 @@ def main_worker(rank, world_size, args):
         scheduler = MultiStepLR(optimizer, [50, 75], gamma=0.1, last_epoch=cur_ep - 2)
     else:
         scheduler = LambdaLR(optimizer, lambda x: x, last_epoch=cur_ep - 2)
+
+    if args.load_model and ckpt and "optimizer" in ckpt:
+        optimizer.load_state_dict(ckpt["optimizer"])
+        scheduler.load_state_dict(ckpt["scheduler"])
+        print(f'### load optimizer and scheduler from {ckpt_path}...')
 
     if args.ddp:
         model = DDP(model, device_ids=[rank])
@@ -590,6 +596,8 @@ def main_worker(rank, world_size, args):
                 if args.save_rec and ((epoch + 1) % args.save_interval) == 0:
                     ckpt = {
                         "state_dict": model.state_dict(),
+                        "optimizer": optimizer.state_dict(),
+                        "scheduler": scheduler.state_dict(),
                         "cur_ep": epoch + 1,
                     }
                     torch.save(
@@ -600,6 +608,8 @@ def main_worker(rank, world_size, args):
                     ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
                     ckpt = {
                         "state_dict": model.state_dict(),
+                        "optimizer": optimizer.state_dict(),
+                        "scheduler": scheduler.state_dict(),
                         "cur_ep": epoch + 1,
                     }
                     torch.save(ckpt, ckpt_dest)
@@ -612,6 +622,8 @@ def main_worker(rank, world_size, args):
                     ckpt_dest = os.path.join(ckpt_dir, f"{args.model_type}_last.ckpt")
                     ckpt = {
                         "state_dict": model.state_dict(),
+                        "optimizer": optimizer.state_dict(),
+                        "scheduler": scheduler.state_dict(),
                         "cur_ep": epoch + 1,
                     }
                     torch.save(ckpt, ckpt_dest)
