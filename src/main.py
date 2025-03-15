@@ -550,6 +550,7 @@ def main_worker(rank, world_size, args):
     total_eval_rot_acc = []
     total_eval_flip_acc = []
     best_acc = -1
+    cur_ep -= 1 if args.eval_only else 0
     for epoch in range(cur_ep, args.epochs + 1):
 
         if not args.eval_only:
