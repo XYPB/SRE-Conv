@@ -2,6 +2,8 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/SRE-Conv.svg)](https://pypi.org/project/SRE-Conv/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![arXiv:2501.09753](https://img.shields.io/badge/arXiv-2501.09753-B31B1B.svg)](https://arxiv.org/abs/2501.09753)
 
+## Please also check out our improved [GMR-Conv](https://github.com/XYPB/GMR-Conv) for better performance and efficiency!
+
 This is the official implementation of paper "SRE-Conv: Symmetric Rotation Equivariant Convolution for Biomedical Image Classification" (accepted by **ISBI 2025**)
 
 *[Yuexi Du](https://xypb.github.io/), Jiazhen Zhang, Tal Zeevi, [Nicha C. Dvornek](https://www.hellonicha.com/), [John A. Onofrey](https://medicine.yale.edu/profile/john-onofrey/)*
@@ -14,8 +16,10 @@ For any question related to the implementation, please open issue in this repo, 
 
 ## News
 
-- **Jan. 2025** Our paper is now available on [arXiv](https://arxiv.org/abs/2501.09753)!
-- **Jan. 2025** Paper accepted by ISBI 2025 and GitHub code released🎉!
+
+- **April 2025:** *We have just released the new [GMR-Conv](https://github.com/XYPB/GMR-Conv), which is a stronger version of SRE-Conv, you may switch to this new version seamlessly!*
+- **Jan. 2025:** Our paper is now available on [arXiv](https://arxiv.org/abs/2501.09753)!
+- **Jan. 2025:** Paper accepted by ISBI 2025 and GitHub code released🎉!
 
 ## Abstract
 
