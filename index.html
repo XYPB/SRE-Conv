@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Demo: Centered Input & 2x3 Dynamic Image Grid</title>
+  <title>SRE-Conv MedMNIST Demo</title>
   <!-- Google Fonts: Using Roboto for a flat and academic-friendly style -->
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -24,8 +24,8 @@
       justify-content: flex-start;
     }
     .page-container {
-      width: 100%;
-      max-width: 1200px;
+      width: 90%; /* Reduced from 100% */
+      max-width: 1080px; /* Reduced from 1200px */
       background: #fff;
       margin: 20px auto;
       padding: 20px;
@@ -50,8 +50,8 @@
     
     /* Make the input image larger */
     #img-input {
-      width: 300%;  /* Controls the size relative to container */
-      max-width: 330px;  /* Maximum absolute width */
+      width: 270%; /* Reduced from 300% */
+      max-width: 297px; /* Reduced from 330px */
       height: auto;
       margin: 10px 0 30px;  /* Adds more space around the larger image */
     }
@@ -86,8 +86,8 @@
     }
     .knob-container input[type="range"] {
       -webkit-appearance: none;
-      width: 300px;
-      height: 30px;
+      width: 350px; /* Reduced from 300px */
+      height: 40px;
       background: transparent;
       margin-top: 10px;
     }
@@ -99,12 +99,12 @@
     }
     .knob-container input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 20px;
-      width: 20px;
+      height: 28px;
+      width: 28px;
       border-radius: 50%;
       background: #0F4D92;
       cursor: pointer;
-      margin-top: -8px;
+      margin-top: -12px;
     }
     .knob-container input[type="range"]::-moz-range-thumb {
       height: 28px;
@@ -115,8 +115,9 @@
       cursor: pointer;
     }
     .angle-display {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
+      font-size: 1.4rem;
+      margin-top: 10px;
+      margin-bottom: 8px;
     }
     /* Navigation buttons */
     .nav-buttons {
@@ -127,8 +128,8 @@
     .nav-button {
       background: #0F4D92;
       color: #fff;
-      font-size: 1rem;
-      padding: 8px 16px;
+      font-size: 1.4rem; /* Increased from 1rem */
+      padding: 12px 24px; /* Increased by 20% from 8px 16px */
       border: none;
       border-radius: 4px;
       cursor: pointer;
@@ -144,7 +145,7 @@
     /* Progress bar styling */
     .progress-container {
       width: 100%;
-      max-width: 300px;
+      max-width: 270px; /* Reduced from 300px */
       background: #eee;
       border-radius: 4px;
       margin-top: 10px;
@@ -189,8 +190,8 @@
       margin-bottom: 20px;
     }
     video {
-      width: 320px;
-      height: 320px; /* Set height equal to width to make it square */
+      width: 288px; /* Reduced from 320px */
+      height: 288px; /* Reduced from 320px */
       border-radius: 4px;
       background: #000;
     }
@@ -208,6 +209,7 @@
       </div>
     </div>
 
+    <hr style="width: 90%; border: 1px solid #ccc; margin: 0 auto 30px;" />
     <!-- ============ DYNAMIC GRID: 2 Rows x 3 Columns ============ -->
     <div class="video-container">
       <!-- Video for first dynamic group (e.g., r18) -->
@@ -261,10 +263,11 @@
     </div>
 
     <!-- ============ BOTTOM HALF: Controls & Progress ============ -->
+    <hr style="width: 90%; border: 1px solid #ccc; margin: 0 auto 30px;" />
     <div class="controls">
       <!-- Knob + angle display -->
       <div class="knob-container">
-        <div class="angle-display">Angle: <span id="currentAngle">0</span>°</div>
+        <div class="angle-display">Input Rotation Angle: <span id="currentAngle">0</span>°</div>
         <input 
           id="angleKnob" 
           type="range" 
@@ -278,8 +281,8 @@
 
       <!-- Navigation buttons for switching image sets -->
       <div class="nav-buttons">
-        <button class="nav-button" id="btnPrev" onclick="prevSet()">← Left</button>
-        <button class="nav-button" id="btnNext" onclick="nextSet()">Right →</button>
+        <button class="nav-button" id="btnPrev" onclick="prevSet()">← Prev</button>
+        <button class="nav-button" id="btnNext" onclick="nextSet()">Next →</button>
       </div>
 
       <!-- Progress bar (assuming 3 total sets) -->
