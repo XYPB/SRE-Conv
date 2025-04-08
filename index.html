@@ -15,7 +15,7 @@
       box-sizing: border-box;
     }
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
       background: #f5f5f5;
       color: #333;
       display: flex;
@@ -24,8 +24,8 @@
       justify-content: flex-start;
     }
     .page-container {
-      width: 90%; /* Reduced from 100% */
-      max-width: 1080px; /* Reduced from 1200px */
+      width: 85.5%; /* Reduced from 90% */
+      max-width: 1026px; /* Reduced from 1080px */
       background: #fff;
       margin: 20px auto;
       padding: 20px;
@@ -50,8 +50,8 @@
     
     /* Make the input image larger */
     #img-input {
-      width: 270%; /* Reduced from 300% */
-      max-width: 297px; /* Reduced from 330px */
+      width: 256.5%; /* Reduced from 270% */
+      max-width: 282.15px; /* Reduced from 297px */
       height: auto;
       margin: 10px 0 30px;  /* Adds more space around the larger image */
     }
@@ -99,16 +99,16 @@
     }
     .knob-container input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      height: 28px;
-      width: 28px;
+      height: 32px;
+      width: 32px;
       border-radius: 50%;
       background: #0F4D92;
       cursor: pointer;
-      margin-top: -12px;
+      margin-top: -14px;
     }
     .knob-container input[type="range"]::-moz-range-thumb {
-      height: 28px;
-      width: 28px;
+      height: 32px;
+      width: 32px;
       border: none;
       border-radius: 50%;
       background: #0F4D92;
@@ -177,7 +177,7 @@
     }
     
     .image-title {
-      margin-top: 9px;
+      margin-top: 6px;
       font-size: 1.5rem;
       font-weight: 500;
       color: #555;
@@ -190,8 +190,8 @@
       margin-bottom: 20px;
     }
     video {
-      width: 288px; /* Reduced from 320px */
-      height: 288px; /* Reduced from 320px */
+      width: 273px; /* Reduced from 288px */
+      height: 273px; /* Reduced from 288px */
       border-radius: 4px;
       background: #000;
     }
@@ -199,6 +199,7 @@
 </head>
 <body>
   <div class="page-container">
+    <h1 style="text-align: center; font-size: 2rem; margin-bottom: 20px;">SRE-Conv MedMNIST Visualization</h1>
     
     <!-- ============ TOP HALF: Static Input Image Centered ============ -->
     <div class="static-image">
@@ -218,21 +219,21 @@
           <source src="images/set1/r18_score.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">ResNet18 Prediction</div>
+        <div class="image-title">RN18 Prediction</div>
       </div>
       <div class="image-container">
         <video id="video-row2-2" preload="metadata">
           <source src="images/set1/r18_feat_map.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">ResNet18 Feature Map</div>
+        <div class="image-title">RN18 Feat Map</div>
       </div>
       <div class="image-container">
         <video id="video-row2-3" preload="metadata">
           <source src="images/set1/r18_diff.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">Relative Feature MSE</div>
+        <div class="image-title">Relative Feat MSE</div>
       </div>
     </div>
 
@@ -244,21 +245,21 @@
           <source src="images/set1/sre_score.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">SRE ResNet18 Prediction</div>
+        <div class="image-title">SRE RN18 Prediction</div>
       </div>
       <div class="image-container">
         <video id="video-row3-2" preload="metadata">
           <source src="images/set1/sre_feat_map.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">SRE ResNet18 Feature Map</div>
+        <div class="image-title">SRE RN18 Feat Map</div>
       </div>
       <div class="image-container">
         <video id="video-row3-3" preload="metadata">
           <source src="images/set1/sre_diff.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
-        <div class="image-title">Relative Feature MSE</div>
+        <div class="image-title">Relative Feat MSE</div>
       </div>
     </div>
 
