@@ -206,7 +206,7 @@
     <div class="static-image">
       <!-- Input Image with title -->
       <div class="image-container">
-        <div class="image-title" id="title-input">Input Image</div>
+        <div class="image-title" id="title-input">Input Image - <span id="setDataLabel"></span></div>
         <img id="img-input" src="" alt="Input Image" />
       </div>
     </div>
@@ -304,8 +304,9 @@
 
 <script>
   // Total number of sets and folders for navigation
-  const totalSets = 4;
-  const setFolders = ["set1", "set2", "set3", "set4"];
+  const totalSets = 11;
+  const setFolders = ["set1", "set2", "set3", "set4", "set5", "set6", "set7", "set8", "set9", "set10", "set11"];
+  const setData = ["Pathology", "Pathology", "Dermatology", "Blood", "Pathology", "Pathology", "Blood", "Blood", "Dermatology", "Dermatology", "Dermatology"];
   let currentSetIndex = 0;  // 0-based set index
   let currentAngle = 0;     // range: 0-360
 
@@ -386,6 +387,8 @@
   // Load images for the current set and angle
   function loadMedia() {
     const folder = setFolders[currentSetIndex];
+    const setDataLabel = document.getElementById('setDataLabel');
+    setDataLabel.textContent = setData[currentSetIndex];
 
     // Top static input image (centered)
     document.getElementById('img-input').src = `images/${folder}/input.png`;
