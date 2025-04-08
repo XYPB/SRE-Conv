@@ -25,8 +25,8 @@
       justify-content: flex-start;
     }
     .page-container {
-      width: 85%; /* Reduced from 90% */
-      max-width: 1026px; /* Reduced from 1080px */
+      width: 80%; /* Reduced from 85% */
+      max-width: 973px; /* Reduced from 1026px */
       background: #fff;
       margin: 20px auto;
       padding: 20px;
@@ -40,7 +40,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .static-image img {
       max-width: 100%;
@@ -51,8 +51,8 @@
     
     /* Make the input image larger */
     #img-input {
-      width: 256%; /* Reduced from 270% */
-      max-width: 282px; /* Reduced from 297px */
+      width: 243%; /* Reduced from 256% */
+      max-width: 267px; /* Reduced from 282px */
       height: auto;
       margin: 10px 0 30px;  /* Adds more space around the larger image */
     }
@@ -65,7 +65,7 @@
       margin-bottom: 20px;
     }
     .dynamic-grid img {
-      width: 100%;
+      width: 95%; /* Reduced from 100% */
       height: auto;
       border-radius: 4px;
       background: #ddd;
@@ -94,9 +94,9 @@
     }
     .knob-container input[type="range"]::-webkit-slider-runnable-track {
       width: 100%;
-      height: 4px;
+      height: 10px;
       background: #ccc;
-      border-radius: 2px;
+      border-radius: 5px;
     }
     .knob-container input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -105,7 +105,7 @@
       border-radius: 50%;
       background: #0F4D92;
       cursor: pointer;
-      margin-top: -14px;
+      margin-top: -12px;
     }
     .knob-container input[type="range"]::-moz-range-thumb {
       height: 32px;
@@ -176,6 +176,9 @@
     .image-container img {
       background-color: transparent
     }
+    .image-container video {
+      background-color: transparent
+    }
     
     .image-title {
       margin-top: 6px;
@@ -191,8 +194,8 @@
       margin-bottom: 20px;
     }
     video {
-      width: 270px; /* Reduced from 288px */
-      height: 270px; /* Reduced from 288px */
+      width: 256px; /* Reduced from 270px */
+      height: 256px; /* Reduced from 270px */
       border-radius: 4px;
       background: #000;
     }
@@ -238,6 +241,7 @@
       </div>
     </div>
 
+    <hr style="width: 90%; border: 1px solid #ccc; margin: 0 auto 30px;" />
     <!-- ============ DYNAMIC GRID: 2 Rows x 3 Columns ============ -->
     <div class="video-container">
       <!-- Video for second dynamic group (e.g., sre) -->
