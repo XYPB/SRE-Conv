@@ -181,6 +181,19 @@
       font-weight: 500;
       color: #555;
     }
+    /* Dynamic video container (2 rows) */
+    .video-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    video {
+      width: 320px;
+      height: 320px; /* Set height equal to width to make it square */
+      border-radius: 4px;
+      background: #000;
+    }
   </style>
 </head>
 <body>
@@ -196,33 +209,54 @@
     </div>
 
     <!-- ============ DYNAMIC GRID: 2 Rows x 3 Columns ============ -->
-    <div class="dynamic-grid">
-      <!-- Row 1 (Dynamic Images) -->
+    <div class="video-container">
+      <!-- Video for first dynamic group (e.g., r18) -->
       <div class="image-container">
-        <img id="img-r2-1" src="" alt="Row2 Image1" />
-        <div class="image-title" id="title-r2-1">ResNet18 Prediction</div>
+        <video id="video-row2-1" preload="metadata">
+          <source src="images/set1/r18_score.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">ResNet18 Prediction</div>
       </div>
       <div class="image-container">
-        <img id="img-r2-2" src="" alt="Row2 Image2" />
-        <div class="image-title" id="title-r2-2">ResNet18 Feature Map</div>
+        <video id="video-row2-2" preload="metadata">
+          <source src="images/set1/r18_feat_map.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">ResNet18 Feature Map</div>
       </div>
       <div class="image-container">
-        <img id="img-r2-3" src="" alt="Row2 Image3" />
-        <div class="image-title" id="title-r2-3">Relative MSE</div>
+        <video id="video-row2-3" preload="metadata">
+          <source src="images/set1/r18_diff.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">Relative Feature MSE</div>
       </div>
+    </div>
 
-      <!-- Row 2 (Dynamic Images) -->
+    <!-- ============ DYNAMIC GRID: 2 Rows x 3 Columns ============ -->
+    <div class="video-container">
+      <!-- Video for second dynamic group (e.g., sre) -->
       <div class="image-container">
-        <img id="img-r3-1" src="" alt="Row3 Image1" />
-        <div class="image-title" id="title-r3-1">SRE ResNet18 Prediction</div>
+        <video id="video-row3-1" preload="metadata">
+          <source src="images/set1/sre_score.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">SRE ResNet18 Prediction</div>
       </div>
       <div class="image-container">
-        <img id="img-r3-2" src="" alt="Row3 Image2" />
-        <div class="image-title" id="title-r3-2">SRE ResNet18 Feature Map</div>
+        <video id="video-row3-2" preload="metadata">
+          <source src="images/set1/sre_feat_map.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">SRE ResNet18 Feature Map</div>
       </div>
       <div class="image-container">
-        <img id="img-r3-3" src="" alt="Row3 Image3" />
-        <div class="image-title" id="title-r3-3">Relative MSE</div>
+        <video id="video-row3-3" preload="metadata">
+          <source src="images/set1/sre_diff.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+        <div class="image-title">Relative Feature MSE</div>
       </div>
     </div>
 
@@ -272,7 +306,7 @@
 
   // On page load, initialize the images and progress information
   window.onload = function() {
-    loadImages();
+    loadMedia();
     updateProgress();
   };
 
@@ -281,14 +315,43 @@
     const knob = document.getElementById('angleKnob');
     currentAngle = parseInt(knob.value);
     document.getElementById('currentAngle').innerText = currentAngle;
-    loadImages();  // Refresh the dynamic images with the new angle index
+    // Calculate time offset for each video based on a 0–360 mapping
+    let videoRow21 = document.getElementById('video-row2-1');
+    let videoRow22 = document.getElementById('video-row2-2');
+    let videoRow23 = document.getElementById('video-row2-3');
+    let videoRow31 = document.getElementById('video-row3-1');
+    let videoRow32 = document.getElementById('video-row3-2');
+    let videoRow33 = document.getElementById('video-row3-3');
+
+
+    if (videoRow21.duration) {
+      videoRow21.currentTime = (currentAngle / 360) * videoRow21.duration;
+    }
+    if (videoRow22.duration) {
+      videoRow22.currentTime = (currentAngle / 360) * videoRow22.duration;
+    }
+    if (videoRow23.duration) {
+      videoRow23.currentTime = (currentAngle / 360) * videoRow23.duration;
+    }
+    if (videoRow31.duration) {
+      videoRow31.currentTime = (currentAngle / 360) * videoRow31.duration;
+    }
+    if (videoRow32.duration) {
+      videoRow32.currentTime = (currentAngle / 360) * videoRow32.duration;
+    }
+    if (videoRow33.duration) {
+      videoRow33.currentTime = (currentAngle / 360) * videoRow33.duration;
+    }
   }
 
   // Navigate to the previous set if available
   function prevSet() {
     if (currentSetIndex > 0) {
       currentSetIndex--;
-      loadImages();
+      currentAngle = 0; // Reset angle to 0
+      document.getElementById('angleKnob').value = currentAngle;
+      document.getElementById('currentAngle').innerText = currentAngle;
+      loadMedia();
       updateProgress();
     }
   }
@@ -297,7 +360,10 @@
   function nextSet() {
     if (currentSetIndex < totalSets - 1) {
       currentSetIndex++;
-      loadImages();
+      currentAngle = 0; // Reset angle to 0
+      document.getElementById('angleKnob').value = currentAngle;
+      document.getElementById('currentAngle').innerText = currentAngle;
+      loadMedia();
       updateProgress();
     }
   }
@@ -313,21 +379,27 @@
   }
 
   // Load images for the current set and angle
-  function loadImages() {
+  function loadMedia() {
     const folder = setFolders[currentSetIndex];
 
     // Top static input image (centered)
     document.getElementById('img-input').src = `images/${folder}/input.png`;
 
     // Dynamic grid images for row 2 (first row of dynamic grid)
-    document.getElementById('img-r2-1').src = `images/${folder}/r18_score_${currentAngle}.png`;
-    document.getElementById('img-r2-2').src = `images/${folder}/r18_feat_map_${currentAngle}.png`;
-    document.getElementById('img-r2-3').src = `images/${folder}/r18_diff_${currentAngle}.png`;
-
+    document.getElementById('video-row2-1').querySelector('source').src = `images/${folder}/r18_score.mp4`;
+    document.getElementById('video-row2-2').querySelector('source').src = `images/${folder}/r18_feat_map.mp4`;
+    document.getElementById('video-row2-3').querySelector('source').src = `images/${folder}/r18_diff.mp4`;
     // Dynamic grid images for row 3 (second row of dynamic grid)
-    document.getElementById('img-r3-1').src = `images/${folder}/sre_score_${currentAngle}.png`;
-    document.getElementById('img-r3-2').src = `images/${folder}/sre_feat_map_${currentAngle}.png`;
-    document.getElementById('img-r3-3').src = `images/${folder}/sre_diff_${currentAngle}.png`;
+    document.getElementById('video-row3-1').querySelector('source').src = `images/${folder}/sre_score.mp4`;
+    document.getElementById('video-row3-2').querySelector('source').src = `images/${folder}/sre_feat_map.mp4`;
+    document.getElementById('video-row3-3').querySelector('source').src = `images/${folder}/sre_diff.mp4`;
+    // Load the videos
+    document.getElementById('video-row2-1').load();
+    document.getElementById('video-row2-2').load();
+    document.getElementById('video-row2-3').load();
+    document.getElementById('video-row3-1').load();
+    document.getElementById('video-row3-2').load();
+    document.getElementById('video-row3-3').load();
   }
 </script>
 
