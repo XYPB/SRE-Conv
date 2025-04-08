@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Demo: Centered Input & 2x3 Dynamic Image Grid</title>
+  <!-- Google Fonts: Using Roboto for a flat and academic-friendly style -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Reset and base styling for a flat design */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .page-container {
+      width: 100%;
+      max-width: 1200px;
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* ============ TOP HALF ============ */
+    /* Container for the static input image (centered) */
+    .static-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .static-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      background: #ddd;
+    }
+    
+    /* Make the input image larger */
+    #img-input {
+      width: 300%;  /* Controls the size relative to container */
+      max-width: 330px;  /* Maximum absolute width */
+      height: auto;
+      margin: 10px 0 30px;  /* Adds more space around the larger image */
+    }
+
+    /* Container for the dynamic images (rows 2 and 3) */
+    .dynamic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dynamic-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      background: #ddd;
+    }
+
+    /* ============ CONTROLS (BOTTOM HALF) ============ */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Knob and angle display */
+    .knob-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .knob-container input[type="range"] {
+      -webkit-appearance: none;
+      width: 300px;
+      height: 30px;
+      background: transparent;
+      margin-top: 10px;
+    }
+    .knob-container input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      background: #ccc;
+      border-radius: 2px;
+    }
+    .knob-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #0F4D92;
+      cursor: pointer;
+      margin-top: -8px;
+    }
+    .knob-container input[type="range"]::-moz-range-thumb {
+      height: 28px;
+      width: 28px;
+      border: none;
+      border-radius: 50%;
+      background: #0F4D92;
+      cursor: pointer;
+    }
+    .angle-display {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    /* Navigation buttons */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .nav-button {
+      background: #0F4D92;
+      color: #fff;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .nav-button:hover {
+      background: #0056b3;
+    }
+    .nav-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    /* Progress bar styling */
+    .progress-container {
+      width: 100%;
+      max-width: 300px;
+      background: #eee;
+      border-radius: 4px;
+      margin-top: 10px;
+      height: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #0F4D92;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-label {
+      margin-top: 6px;
+      text-align: center;
+    }
+    
+    /* Image title styling */
+    .image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background-color: #fff; /* Set background color to pure white */
+    }
+    .image-container img {
+      background-color: transparent
+    }
+    
+    .image-title {
+      margin-top: 9px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    
+    <!-- ============ TOP HALF: Static Input Image Centered ============ -->
+    <div class="static-image">
+      <!-- Input Image with title -->
+      <div class="image-container">
+        <div class="image-title" id="title-input">Input Image</div>
+        <img id="img-input" src="" alt="Input Image" />
+      </div>
+    </div>
+
+    <!-- ============ DYNAMIC GRID: 2 Rows x 3 Columns ============ -->
+    <div class="dynamic-grid">
+      <!-- Row 1 (Dynamic Images) -->
+      <div class="image-container">
+        <img id="img-r2-1" src="" alt="Row2 Image1" />
+        <div class="image-title" id="title-r2-1">ResNet18 Prediction</div>
+      </div>
+      <div class="image-container">
+        <img id="img-r2-2" src="" alt="Row2 Image2" />
+        <div class="image-title" id="title-r2-2">ResNet18 Feature Map</div>
+      </div>
+      <div class="image-container">
+        <img id="img-r2-3" src="" alt="Row2 Image3" />
+        <div class="image-title" id="title-r2-3">Relative MSE</div>
+      </div>
+
+      <!-- Row 2 (Dynamic Images) -->
+      <div class="image-container">
+        <img id="img-r3-1" src="" alt="Row3 Image1" />
+        <div class="image-title" id="title-r3-1">SRE ResNet18 Prediction</div>
+      </div>
+      <div class="image-container">
+        <img id="img-r3-2" src="" alt="Row3 Image2" />
+        <div class="image-title" id="title-r3-2">SRE ResNet18 Feature Map</div>
+      </div>
+      <div class="image-container">
+        <img id="img-r3-3" src="" alt="Row3 Image3" />
+        <div class="image-title" id="title-r3-3">Relative MSE</div>
+      </div>
+    </div>
+
+    <!-- ============ BOTTOM HALF: Controls & Progress ============ -->
+    <div class="controls">
+      <!-- Knob + angle display -->
+      <div class="knob-container">
+        <div class="angle-display">Angle: <span id="currentAngle">0</span>°</div>
+        <input 
+          id="angleKnob" 
+          type="range" 
+          min="0" 
+          max="359" 
+          step="1" 
+          value="0" 
+          oninput="updateAngle()" 
+        />
+      </div>
+
+      <!-- Navigation buttons for switching image sets -->
+      <div class="nav-buttons">
+        <button class="nav-button" id="btnPrev" onclick="prevSet()">← Left</button>
+        <button class="nav-button" id="btnNext" onclick="nextSet()">Right →</button>
+      </div>
+
+      <!-- Progress bar (assuming 3 total sets) -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Set 1 of 3</div>
+    </div>
+
+  </div><!-- .page-container -->
+
+  <!-- Acknowledgment Section -->
+  <footer style="text-align: center; font-size: 0.8rem; color: gray; margin-top: 20px;">
+    <!-- Placeholder content -->
+    This work is licensed under the MIT license. <br> The images are obtained from MedMNIST dataset for demonstration purposes only. <br> This page is created by Yuexi Du, 2025. <br> All rights reserved.
+  </footer>
+
+<script>
+  // Total number of sets and folders for navigation
+  const totalSets = 3;
+  const setFolders = ["set1", "set2", "set3"];
+  let currentSetIndex = 0;  // 0-based set index
+  let currentAngle = 0;     // range: 0-360
+
+  // On page load, initialize the images and progress information
+  window.onload = function() {
+    loadImages();
+    updateProgress();
+  };
+
+  // Updates the angle based on the knob's value and reloads the dynamic images
+  function updateAngle() {
+    const knob = document.getElementById('angleKnob');
+    currentAngle = parseInt(knob.value);
+    document.getElementById('currentAngle').innerText = currentAngle;
+    loadImages();  // Refresh the dynamic images with the new angle index
+  }
+
+  // Navigate to the previous set if available
+  function prevSet() {
+    if (currentSetIndex > 0) {
+      currentSetIndex--;
+      loadImages();
+      updateProgress();
+    }
+  }
+
+  // Navigate to the next set if available
+  function nextSet() {
+    if (currentSetIndex < totalSets - 1) {
+      currentSetIndex++;
+      loadImages();
+      updateProgress();
+    }
+  }
+
+  // Update the progress bar and label for the current image set
+  function updateProgress() {
+    const progressBar = document.getElementById('progressBar');
+    const progressLabel = document.getElementById('progressLabel');
+    const currentSetNumber = currentSetIndex + 1;
+    progressLabel.textContent = `Set ${currentSetNumber} of ${totalSets}`;
+    const percent = (currentSetNumber / totalSets) * 100;
+    progressBar.style.width = percent + "%";
+  }
+
+  // Load images for the current set and angle
+  function loadImages() {
+    const folder = setFolders[currentSetIndex];
+
+    // Top static input image (centered)
+    document.getElementById('img-input').src = `images/${folder}/input.png`;
+
+    // Dynamic grid images for row 2 (first row of dynamic grid)
+    document.getElementById('img-r2-1').src = `images/${folder}/r18_score_${currentAngle}.png`;
+    document.getElementById('img-r2-2').src = `images/${folder}/r18_feat_map_${currentAngle}.png`;
+    document.getElementById('img-r2-3').src = `images/${folder}/r18_diff_${currentAngle}.png`;
+
+    // Dynamic grid images for row 3 (second row of dynamic grid)
+    document.getElementById('img-r3-1').src = `images/${folder}/sre_score_${currentAngle}.png`;
+    document.getElementById('img-r3-2').src = `images/${folder}/sre_feat_map_${currentAngle}.png`;
+    document.getElementById('img-r3-3').src = `images/${folder}/sre_diff_${currentAngle}.png`;
+  }
+</script>
+
+</body>
+</html>
