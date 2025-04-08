@@ -270,28 +270,8 @@
   let currentSetIndex = 0;  // 0-based set index
   let currentAngle = 0;     // range: 0-360
 
-  // Preload images for all angles
-  function preloadImages() {
-    const imagePaths = [];
-    for (let angle = 0; angle < 360; angle++) {
-      setFolders.forEach(folder => {
-        imagePaths.push(`images/${folder}/r18_score_${angle}.png`);
-        imagePaths.push(`images/${folder}/r18_feat_map_${angle}.png`);
-        imagePaths.push(`images/${folder}/r18_diff_${angle}.png`);
-        imagePaths.push(`images/${folder}/sre_score_${angle}.png`);
-        imagePaths.push(`images/${folder}/sre_feat_map_${angle}.png`);
-        imagePaths.push(`images/${folder}/sre_diff_${angle}.png`);
-      });
-    }
-    imagePaths.forEach(path => {
-      const img = new Image();
-      img.src = path;
-    });
-  }
-
   // On page load, initialize the images and progress information
   window.onload = function() {
-    preloadImages(); // Preload all images
     loadImages();
     updateProgress();
   };
