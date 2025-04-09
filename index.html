@@ -437,6 +437,24 @@
     }
   }
 
+  // Reset all videos to the beginning position
+  function resetAllVideos() {
+    const videos = [
+      document.getElementById('video-input'),
+      document.getElementById('video-row2-1'),
+      document.getElementById('video-row2-2'),
+      document.getElementById('video-row2-3'),
+      document.getElementById('video-row3-1'),
+      document.getElementById('video-row3-2'),
+      document.getElementById('video-row3-3')
+    ];
+
+    videos.forEach(video => {
+      video.pause();
+      video.currentTime = 0;
+    });
+  }
+
   // Navigate to the previous set if available
   function prevSet() {
     if (currentSetIndex > 0) {
@@ -447,6 +465,7 @@
       document.getElementById('currentAngleBot').innerText = currentAngle;
       loadMedia();
       updateProgress();
+      resetAllVideos(); // Reset all videos to beginning
     }
   }
 
@@ -460,6 +479,7 @@
       document.getElementById('currentAngleBot').innerText = currentAngle;
       loadMedia();
       updateProgress();
+      resetAllVideos(); // Reset all videos to beginning
     }
   }
 
