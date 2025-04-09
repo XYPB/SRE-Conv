@@ -184,7 +184,7 @@
     
     .image-title {
       margin-top: 6px;
-      font-size: 1.5rem;
+      font-size: 1.3  rem;
       font-weight: 500;
       color: #555;
     }
@@ -194,12 +194,68 @@
       gap: 20px;
       justify-content: center;
       margin-bottom: 20px;
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
     }
     video {
-      width: 256px; /* Reduced from 270px */
-      height: 256px; /* Reduced from 270px */
+      width: 240px; /* Reduced from 256px */
+      height: 240px; /* Reduced from 256px */
       border-radius: 4px;
       background: #000;
+    }
+
+    /* Add responsive media queries for different screen sizes */
+    @media (max-width: 1200px) {
+      .video-container {
+        gap: 15px;
+      }
+      video {
+        width: 220px;
+        height: 220px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .video-container {
+        gap: 10px;
+      }
+      video {
+        width: 200px;
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-container {
+        width: 95%;
+        padding: 15px;
+      }
+      .video-container {
+        gap: 8px;
+      }
+      video {
+        width: 160px;
+        height: 160px;
+      }
+      .nav-button {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .video-container {
+        gap: 5px;
+      }
+      video {
+        width: 120px;
+        height: 120px;
+      }
+      .image-title {
+        font-size: 1.1em;
+      }
+      .angle-display {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
@@ -221,12 +277,16 @@
       </a>
     </div>
     
-    <!-- ============ TOP HALF: Static Input Image Centered ============ -->
+    <!-- ============ TOP HALF: Static Input Video Centered ============ -->
     <div class="static-image">
-      <!-- Input Image with title -->
+      <!-- Input Video with title -->
       <div class="image-container">
-        <div class="image-title" id="title-input">Input Image - <span id="setDataLabel"></span></div>
-        <img id="img-input" src="" alt="Input Image" />
+        <div class="image-title" id="title-input">Input Video - <span id="setDataLabel"></span></div>
+        <div class="angle-display">Input Rotation Angle: <span id="currentAngleUp">0</span>°</div>
+        <video id="video-input" preload="auto">
+          <source src="" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
       </div>
     </div>
 
@@ -235,21 +295,21 @@
     <div class="video-container">
       <!-- Video for first dynamic group (e.g., r18) -->
       <div class="image-container">
-        <video id="video-row2-1" preload="metadata">
+        <video id="video-row2-1" preload="auto">
           <source src="images/set1/r18_score.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
         <div class="image-title">RN18 Prediction</div>
       </div>
       <div class="image-container">
-        <video id="video-row2-2" preload="metadata">
+        <video id="video-row2-2" preload="auto">
           <source src="images/set1/r18_feat_map.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
         <div class="image-title">RN18 Feat Map</div>
       </div>
       <div class="image-container">
-        <video id="video-row2-3" preload="metadata">
+        <video id="video-row2-3" preload="auto">
           <source src="images/set1/r18_diff.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
@@ -262,21 +322,21 @@
     <div class="video-container">
       <!-- Video for second dynamic group (e.g., sre) -->
       <div class="image-container">
-        <video id="video-row3-1" preload="metadata">
+        <video id="video-row3-1" preload="auto">
           <source src="images/set1/sre_score.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
         <div class="image-title">SRE RN18 Prediction</div>
       </div>
       <div class="image-container">
-        <video id="video-row3-2" preload="metadata">
+        <video id="video-row3-2" preload="auto">
           <source src="images/set1/sre_feat_map.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
         <div class="image-title">SRE RN18 Feat Map</div>
       </div>
       <div class="image-container">
-        <video id="video-row3-3" preload="metadata">
+        <video id="video-row3-3" preload="auto">
           <source src="images/set1/sre_diff.mp4" type="video/mp4">
           Your browser does not support HTML5 video.
         </video>
@@ -287,9 +347,11 @@
     <!-- ============ BOTTOM HALF: Controls & Progress ============ -->
     <hr style="width: 90%; border: 1px solid #ccc; margin: 0 auto 30px;" />
     <div class="controls">
+      <!-- Play button -->
+      <button class="nav-button" id="btnPlay" onclick="playAllVideos()">Play All</button>
       <!-- Knob + angle display -->
       <div class="knob-container">
-        <div class="angle-display">Input Rotation Angle: <span id="currentAngle">0</span>°</div>
+        <div class="angle-display">Input Rotation Angle: <span id="currentAngleBot">0</span>°</div>
         <input 
           id="angleKnob" 
           type="range" 
@@ -319,7 +381,7 @@
   <!-- Acknowledgment Section -->
   <footer style="text-align: center; font-size: 0.8rem; color: gray; margin-top: 20px; margin-bottom: 40px">
     <!-- Placeholder content -->
-    This work is licensed under the <a href="https://github.com/XYPB/SRE-Conv/tree/master?tab=MIT-1-ov-file">MIT license</a>. <br> The images are obtained from MedMNIST dataset for demonstration purposes only. <br> This page is created by Yuexi Du, 2025. <br> <a href="https://www.flaticon.com/free-icons/github" title="github icons">Github icons created by Dave Gandy - Flaticon</a> <br> All rights reserved.
+    This work accepted by ISBI 2025 and is licensed under the <a href="https://github.com/XYPB/SRE-Conv/tree/master?tab=MIT-1-ov-file">MIT license</a>. <br> The images are obtained from MedMNIST dataset for demonstration purposes only. <br> This page is created by Yuexi Du, 2025 at Yale University. <br> <a href="https://www.flaticon.com/free-icons/github" title="github icons">Github icons created by Dave Gandy - Flaticon</a> <br> All rights reserved.
   </footer>
 
 <script>
@@ -340,8 +402,11 @@
   function updateAngle() {
     const knob = document.getElementById('angleKnob');
     currentAngle = parseInt(knob.value);
-    document.getElementById('currentAngle').innerText = currentAngle;
+    document.getElementById('currentAngleUp').innerText = currentAngle;
+    document.getElementById('currentAngleBot').innerText = currentAngle;
+
     // Calculate time offset for each video based on a 0–360 mapping
+    let videoInput = document.getElementById('video-input');
     let videoRow21 = document.getElementById('video-row2-1');
     let videoRow22 = document.getElementById('video-row2-2');
     let videoRow23 = document.getElementById('video-row2-3');
@@ -349,7 +414,9 @@
     let videoRow32 = document.getElementById('video-row3-2');
     let videoRow33 = document.getElementById('video-row3-3');
 
-
+    if (videoInput.duration) {
+      videoInput.currentTime = (currentAngle / 360) * videoInput.duration;
+    }
     if (videoRow21.duration) {
       videoRow21.currentTime = (currentAngle / 360) * videoRow21.duration;
     }
@@ -376,7 +443,8 @@
       currentSetIndex--;
       currentAngle = 0; // Reset angle to 0
       document.getElementById('angleKnob').value = currentAngle;
-      document.getElementById('currentAngle').innerText = currentAngle;
+      document.getElementById('currentAngleUp').innerText = currentAngle;
+      document.getElementById('currentAngleBot').innerText = currentAngle;
       loadMedia();
       updateProgress();
     }
@@ -388,7 +456,8 @@
       currentSetIndex++;
       currentAngle = 0; // Reset angle to 0
       document.getElementById('angleKnob').value = currentAngle;
-      document.getElementById('currentAngle').innerText = currentAngle;
+      document.getElementById('currentAngleUp').innerText = currentAngle;
+      document.getElementById('currentAngleBot').innerText = currentAngle;
       loadMedia();
       updateProgress();
     }
@@ -410,24 +479,94 @@
     const setDataLabel = document.getElementById('setDataLabel');
     setDataLabel.textContent = setData[currentSetIndex];
 
-    // Top static input image (centered)
-    document.getElementById('img-input').src = `images/${folder}/input.png`;
+    // Top static input video (centered)
+    document.getElementById('video-input').querySelector('source').src = `images/${folder}/input.mp4`;
 
-    // Dynamic grid images for row 2 (first row of dynamic grid)
+    // Dynamic grid videos for row 2 (first row of dynamic grid)
     document.getElementById('video-row2-1').querySelector('source').src = `images/${folder}/r18_score.mp4`;
     document.getElementById('video-row2-2').querySelector('source').src = `images/${folder}/r18_feat_map.mp4`;
     document.getElementById('video-row2-3').querySelector('source').src = `images/${folder}/r18_diff.mp4`;
-    // Dynamic grid images for row 3 (second row of dynamic grid)
+    // Dynamic grid videos for row 3 (second row of dynamic grid)
     document.getElementById('video-row3-1').querySelector('source').src = `images/${folder}/sre_score.mp4`;
     document.getElementById('video-row3-2').querySelector('source').src = `images/${folder}/sre_feat_map.mp4`;
     document.getElementById('video-row3-3').querySelector('source').src = `images/${folder}/sre_diff.mp4`;
     // Load the videos
+    document.getElementById('video-input').load();
     document.getElementById('video-row2-1').load();
     document.getElementById('video-row2-2').load();
     document.getElementById('video-row2-3').load();
     document.getElementById('video-row3-1').load();
     document.getElementById('video-row3-2').load();
     document.getElementById('video-row3-3').load();
+  }
+
+  function playAllVideos() {
+    // Reset angle to 0 at the beginning
+    currentAngle = 0;
+    document.getElementById('angleKnob').value = currentAngle;
+    document.getElementById('currentAngleUp').innerText = currentAngle;
+    document.getElementById('currentAngleBot').innerText = currentAngle;
+
+    const videos = [
+      document.getElementById('video-input'),
+      document.getElementById('video-row2-1'),
+      document.getElementById('video-row2-2'),
+      document.getElementById('video-row2-3'),
+      document.getElementById('video-row3-1'),
+      document.getElementById('video-row3-2'),
+      document.getElementById('video-row3-3')
+    ];
+
+    // Reset all videos to the beginning and play them
+    videos.forEach(video => {
+      video.currentTime = 0;
+      video.play();
+    });
+
+    // Get the duration of the first loaded video to calculate update interval
+    let videoDuration = 0;
+    for (const video of videos) {
+      if (video.duration) {
+        videoDuration = video.duration;
+        break;
+      }
+    }
+
+    if (!videoDuration) {
+      // If no video duration is available yet, estimate 5 seconds
+      videoDuration = 6;
+    }
+
+    // Calculate how often to update the angle (in milliseconds)
+    // for each degree (360 degrees total)
+    const updateIntervalMs = (videoDuration * 1000) / 359;
+    
+    // Reset angle to start
+    currentAngle = 0;
+    document.getElementById('angleKnob').value = currentAngle;
+    document.getElementById('currentAngleUp').innerText = currentAngle;
+    document.getElementById('currentAngleBot').innerText = currentAngle;
+    
+    // Update angle continuously
+    const angleInterval = setInterval(() => {
+      if (currentAngle < 359) {
+        currentAngle += 1;
+        document.getElementById('angleKnob').value = currentAngle;
+        document.getElementById('currentAngleUp').innerText = currentAngle;
+        document.getElementById('currentAngleBot').innerText = currentAngle;
+      } else {
+        clearInterval(angleInterval); // Stop the interval when reaching 359
+      }
+    }, updateIntervalMs);
+    
+    // Clear the interval when videos finish
+    setTimeout(() => {
+      clearInterval(angleInterval);
+      currentAngle = 0;
+      document.getElementById('angleKnob').value = currentAngle;
+      document.getElementById('currentAngleUp').innerText = currentAngle;
+      document.getElementById('currentAngleBot').innerText = currentAngle;
+    }, videoDuration * 1000); // Add a small buffer
   }
 </script>
 
